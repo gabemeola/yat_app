@@ -7,5 +7,6 @@
 }
 
 .task:last-of-type {
-  margin-bottom: 0;
+  // Additional spacing to see the last todo
+  margin-bottom: 160px;
 }

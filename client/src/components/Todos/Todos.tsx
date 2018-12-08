@@ -3,8 +3,15 @@ import { Todo } from 'models/Todo';
 import Task from 'components/Task/Task';
 import styles from './Todos.module.scss';
 
+let init: Todo[] = []
+for (let i = 0; i <= 20; i++) {
+  init.push({
+    message: i.toString()
+  })
+}
+
 export default function Todos() {
-  const initialTodoState: Todo[] = [];
+  const initialTodoState: Todo[] = init;
   const [todos, setTodo] = useState(initialTodoState);
   const [currentTodoValue, setCurrentTodo] = useState('');
 
@@ -20,11 +27,12 @@ export default function Todos() {
 
   return (
     <main className={styles.main}>
-      <h2>Todo</h2>
-      <form onSubmit={onTodoSubmit}>
+      <form onSubmit={onTodoSubmit} className={styles.input}>
+        <label htmlFor="todoInput">Add Task</label>
         <input
           placeholder="What would you like to do?"
           value={currentTodoValue}
+          id="todoInput"
           onChange={(ev) => {
             setCurrentTodo(ev.target.value);
           }}

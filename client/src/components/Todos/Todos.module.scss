@@ -8,3 +8,23 @@
   flex-direction: column;
   margin: 30px auto 0;
 }
+
+.input {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: orange;
+  padding: 5px 5px;
+
+  label {
+    display: block;
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+    height: 45px;
+    padding: 5px;
+    border: 0.5px solid gray;
+  }
+}
