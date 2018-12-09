@@ -60,3 +60,8 @@ typings/
 .DS_STORE
 .vscode/
 .idea/
+dist/
+lib/
+*.heapsnapshot*
+package-lock.json
+public/index.html
