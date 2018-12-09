@@ -1,0 +1,31 @@
+.nav {
+  display: flex;
+  align-self: flex-start;
+  align-items: center;
+  margin: 30px 0;
+  width: 100%;
+}
+
+.link {
+  flex: 1;
+  max-width: 80px;
+  padding-right: 15px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.link:last-of-type {
+  padding-right: 0;
+}
+
+.activeLink {
+  color: orange;
+}
+
+.addBtn {
+  width: 25px;
+  height: 25px;
+  background-color: lightgray;
+  border: 1px dashed grey;
+  border-radius: 60px;
+}

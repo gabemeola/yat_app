@@ -3,7 +3,10 @@ import { Todo } from 'models/Todo';
 import Task from 'components/Task/Task';
 import styles from './Todos.module.scss';
 
-let init: Todo[] = []
+let init: Todo[] = [{
+  id: 100,
+  message: 'djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka ',
+}]
 for (let i = 0; i <= 20; i++) {
   init.push({
     id: i,
@@ -11,7 +14,15 @@ for (let i = 0; i <= 20; i++) {
   })
 }
 
-export default function Todos() {
+type Props = {
+  match: {
+    params: {
+      list?: string,
+    }
+  }
+}
+
+export default function Todos(props: Props) {
   const initialTodoState: Todo[] = init;
   const [todos, setTodo] = useState(initialTodoState);
   const [currentTodoValue, setCurrentTodo] = useState('');
@@ -51,7 +62,8 @@ export default function Todos() {
   }
 
   return (
-    <main className={styles.main}>
+    <main>
+      <h3 style={{ textTransform: 'capitalize' }}>{props.match.params.list}</h3>
       <form onSubmit={handleTodoSubmit} className={styles.input}>
         <label htmlFor="todoInput">Add Task</label>
         <input

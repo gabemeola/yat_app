@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { Todo } from 'models/Todo';
 import useLongPress from 'hooks/useLongPress';
 import styles from './Task.module.scss';
@@ -13,6 +13,12 @@ export default function Task({ todo, onDelete, onUpdate }: Props) {
   const [isEditing, setEditing] = useState(false);
   const [updateValue, setUpdateValue] = useState(todo.message);
 
+  // Reset updateValue if a user
+  // enter text but doesn't save update
+  useEffect(() => {
+    setUpdateValue(todo.message);
+  }, [isEditing])
+
   const toggleEditing = () => setEditing(!isEditing);
   const handleSubmit = (ev: FormEvent) => {
     ev.preventDefault();
@@ -24,19 +30,31 @@ export default function Task({ todo, onDelete, onUpdate }: Props) {
   return (
     <div
       className={styles.task}
+      // Double click for mouse pointer
       onDoubleClick={toggleEditing}
+      // Close on un-focus
+      onBlur={toggleEditing}
+      // Long press for touch devices
       {...useLongPress(toggleEditing, 500)}
     >
       {isEditing === false
         ? <span>{todo.message}</span>
         : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={styles.editField}>
             <input
               value={updateValue}
               onChange={(ev) => setUpdateValue(ev.target.value)}
               autoFocus
             />
           </form>
+        //   <div
+        //     onSubmit={handleSubmit}
+        //     contentEditable
+        //     // @ts-ignore
+        //     onInput={(ev) => setUpdateValue(ev.currentTarget.textContent)}
+        //   >
+        //     {updateValue}
+        // </div>
         )
       }
       <button onClick={() => onDelete(todo.id)}>x</button>

@@ -19,12 +19,14 @@ export default function useLongPress(onLongPress: (ev: React.TouchEvent) => any,
   }, [])
 
   const style: React.CSSProperties = {
-    WebkitUserSelect: 'none',
+    // TODO: Only disable userSelect on startTimer
+    userSelect: 'none',
     WebkitTouchCallout: 'none'
   }
 
   return {
     // Prevent Content Menus
+    // TODO: Allow contextMenu on mouse devices
     onContextMenu: (ev: React.MouseEvent) => ev.preventDefault(),
     onTouchStart: startTimer,
     onTouchEnd: clearTimer,

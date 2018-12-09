@@ -12,3 +12,18 @@
   // Additional spacing to see the last todo
   margin-bottom: 160px;
 }
+
+.editField {
+  flex: 1;
+  display: flex;
+
+  input {
+    width: 98%;
+    resize: height;
+    display: block;
+    border: none;
+    padding: 5px 0 4px 0;
+    outline: 0.5px dashed grey;
+    outline-offset: 2px;
+  }
+}
