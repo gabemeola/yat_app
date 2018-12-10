@@ -7,11 +7,11 @@ import styles from './ActivityBar.module.less';
 
 
 const colors = [
-  'red',
-  'green',
-  'blue',
-  'pink',
-  'brown',
+  '#D90000',
+  '#04756F',
+  '#2E0927',
+  '#FF2D00',
+  '#FF8C00',
 ]
 
 export default function ActivityBar() {

@@ -1,5 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import Icon from 'app/components/Icon/Icon';
+import PlusIcon from 'app/assets/plus-circle.svg';
 import styles from './Nav.module.less';
 
 type Props = {
@@ -28,7 +30,7 @@ export default function Nav({ lists }: Props) {
         title="Create new list"
         to="/create"
       >
-        +
+        <Icon icon={PlusIcon} alt="Create new list" />
       </NavLink>
     </nav>
   )

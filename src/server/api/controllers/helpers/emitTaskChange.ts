@@ -3,5 +3,5 @@ import { Todo } from 'models/Todo';
 
 
 export default function emitTaskChange(ws: Socket, listName: string, tasks: Todo[]) {
-  ws.volatile.emit(`updateList(${listName})`, tasks);
+  ws.emit(`updateList(${listName})`, tasks);
 }

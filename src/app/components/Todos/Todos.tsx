@@ -25,7 +25,7 @@ export default function Todos(props: Props) {
 
   const currentList = props.match.params.list;
 
-  const handleTodoSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = (ev: React.FormEvent) => {
     // TODO: Scroll to bottom on add if scroll pos already on bottom
     ev.preventDefault();
     // Save to todos
@@ -43,7 +43,7 @@ export default function Todos(props: Props) {
     setCurrentTodo('');
   }
 
-  const handleTodoDelete = (id: number) => {
+  const handleDelete = (id: number) => {
     betterFetch(`/api/lists/${currentList}/${id}`, {
       method: 'DELETE',
     })
@@ -56,8 +56,8 @@ export default function Todos(props: Props) {
       })
   }
 
-  const handleTodoUpdate = (id: number, message: string) => {
-    betterFetch(`/api/lists/${currentList}/${id}?message=${message}`, {
+  const handleUpdate = (id: number, message: string, done: boolean = false) => {
+    betterFetch(`/api/lists/${currentList}/${id}?message=${message}&done=${done}`, {
       method: 'PUT',
     })
       .then((res) => res.json())
@@ -115,7 +115,7 @@ export default function Todos(props: Props) {
         <h3 style={{ textTransform: 'capitalize' }}>{currentList}</h3>
         <ActivityBar />
       </div>
-      <form onSubmit={handleTodoSubmit} className={styles.input}>
+      <form onSubmit={handleSubmit} className={styles.input}>
         <label htmlFor="todoInput">
           Add Task
           <input
@@ -135,8 +135,8 @@ export default function Todos(props: Props) {
             <Task
               key={todo.id}
               todo={todo}
-              onDelete={handleTodoDelete}
-              onUpdate={handleTodoUpdate}
+              onDelete={handleDelete}
+              onUpdate={handleUpdate}
             />
           )
         })

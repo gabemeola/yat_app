@@ -19,18 +19,20 @@ export default function CreateList({ createList, history }: Props) {
   const handleSubmit = (ev: React.FormEvent) => {
     ev.preventDefault();
 
-    createList(value)
-      .then(() => {
-        // Go to created list
-        history.push(`/list/${value}`)
-      });
+    if (value) {
+      createList(value)
+        .then(() => {
+          // Go to created list
+          history.push(`/list/${value}`)
+        });
+    }
   }
 
   return (
     <div>
       <h3>Create a new task list</h3>
       <br />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <label htmlFor="createList">
           List Name
           <input
@@ -40,6 +42,7 @@ export default function CreateList({ createList, history }: Props) {
             onChange={handleChange}
           />
         </label>
+        <button type="submit" disabled={value === ''}>Create List</button>
       </form>
     </div>
   )

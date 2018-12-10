@@ -10,12 +10,13 @@ interface Req extends Request {
   },
   query: {
     message?: string,
+    done?: string,
   }
 }
 
 export default function updateTask(req: Req, res: Response) {
   const { id, listName } = req.params;
-  const { message } = req.query;
+  const { message, done } = req.query;
   if (!id) {
     res.status(400).send('id param is required');
     return;
@@ -34,7 +35,9 @@ export default function updateTask(req: Req, res: Response) {
 
   const ws: Socket = req.app.get('ws');
 
-  const updateList = list.update(Number(id), message);
+  // Convert string to boolean
+  const doneBoolean = done === 'true';
+  const updateList = list.update(Number(id), message, doneBoolean);
   emitTaskChange(ws, listName, updateList);
   res.status(200).send(updateList);
 }
