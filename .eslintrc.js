@@ -14,6 +14,7 @@ module.exports = {
         // Overrides for typescript parsing
         "no-undef": "off",
         "no-unused-vars": "off",
-        "no-restricted-globals": "off"
+        "no-restricted-globals": "off",
+        "react/prop-types": "off",
     }
 }

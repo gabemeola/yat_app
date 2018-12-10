@@ -1,6 +1,8 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { Todo } from 'models/Todo';
 import useLongPress from 'app/hooks/useLongPress';
+import Icon from 'app/components/Icon/Icon';
+import trash from 'app/assets/trash.svg';
 import styles from './Task.module.less';
 
 type Props = {
@@ -48,17 +50,14 @@ export default function Task({ todo, onDelete, onUpdate }: Props) {
               autoFocus
             />
           </form>
-        //   <div
-        //     onSubmit={handleSubmit}
-        //     contentEditable
-        //     // @ts-ignore
-        //     onInput={(ev) => setUpdateValue(ev.currentTarget.textContent)}
-        //   >
-        //     {updateValue}
-        // </div>
         )
       }
-      <button onClick={() => onDelete(todo.id)} type="button">x</button>
+      <button
+        onClick={() => onDelete(todo.id)}
+        type="button"
+      >
+        <Icon alt={`delete task ${todo.message}`} icon={trash} size={18} />
+      </button>
     </div>
   )
 }

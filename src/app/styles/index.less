@@ -2,6 +2,7 @@
 @import './normalize.less';
 
 @lineHeight: 1.66;
+@color: rgba(0, 0, 0, 0.88);
 
 /* Root Styles */
 html {
@@ -13,7 +14,7 @@ html {
 
 body {
   line-height: @lineHeight;
-  color: rgba(0, 0, 0, 0.88)
+  color: @color;
 }
 
 * {
@@ -24,4 +25,24 @@ button {
   border: none;
   user-select: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  height: 45px;
+  padding: 5px;
+  border: 0.5px solid gray;
+}
+
+a {
+  text-decoration: none;
+  color: @color;
 }

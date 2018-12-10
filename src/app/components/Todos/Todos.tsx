@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Todo } from 'models/Todo';
 import betterFetch from 'utils/betterFetch';
 import ws from 'app/config/socket';
+import Loading from 'app/components/Indicators/Loading';
 import ActivityBar from 'app/components/ActivityBar/ActivityBar';
 import Task from 'app/components/Task/Task';
 import styles from './Todos.module.less';
@@ -20,7 +21,6 @@ export default function Todos(props: Props) {
   const [todos, setTodos] = useState([] as Todo[]);
   const [currentTodoValue, setCurrentTodo] = useState('');
   const [loading, setLoading] = useState(true);
-  const toggleLoading = () => setLoading(!loading);
   const [error, setError] = useState('');
 
   const currentList = props.match.params.list;
@@ -34,7 +34,10 @@ export default function Todos(props: Props) {
     })
       .then((res) => res.json())
       .then((todos: Todo[]) => {
-        setTodos(() => todos);
+        setTodos(todos);
+      })
+      .catch((err) => {
+        console.error('error submitting todo', err);
       })
     // Clear input box
     setCurrentTodo('');
@@ -46,7 +49,10 @@ export default function Todos(props: Props) {
     })
       .then((res) => res.json())
       .then((todos: Todo[]) => {
-        setTodos(() => todos);
+        setTodos(todos);
+      })
+      .catch((err) => {
+        console.error(`error deleting todo ${id}`, err)
       })
   }
 
@@ -56,26 +62,31 @@ export default function Todos(props: Props) {
     })
       .then((res) => res.json())
       .then((todos: Todo[]) => {
-        setTodos(() => todos);
+        setTodos(todos);
+      })
+      .catch((err) => {
+        console.error(`error updating todo ${id}`, err)
       })
   }
 
   useEffect(() => {
+    setLoading(() => true)
     // Initial List Fetch
     betterFetch(`/api/lists/${currentList}`)
       .then((res) => res.json())
       .then((todos: Todo[]) => {
-        setTodos(() => todos);
+        setTodos(todos);
+        setLoading(false)
       })
       .catch(() => {
-        setError(`Error loading ${currentList}`)
-        toggleLoading()
+        setError(`Could not load list "${currentList}"`)
+        setLoading(false)
       })
 
     // Listen for changes
     const event = `updateList(${currentList})`;
     ws.on(event, (todos: Todo[]) => {
-      setTodos(() => todos);
+      setTodos(todos);
     })
 
     return () => {
@@ -87,11 +98,15 @@ export default function Todos(props: Props) {
 
   if (error) {
     return (
-      <Fragment>
-        <p>{error}</p>
+      <div>
+        <h4>{error}</h4>
         <Link to="/">Go Home</Link>
-      </Fragment>
+      </div>
     )
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   return (
@@ -101,15 +116,17 @@ export default function Todos(props: Props) {
         <ActivityBar />
       </div>
       <form onSubmit={handleTodoSubmit} className={styles.input}>
-        <label htmlFor="todoInput">Add Task</label>
-        <input
-          placeholder="What would you like to do?"
-          value={currentTodoValue}
-          id="todoInput"
-          onChange={(ev) => {
-            setCurrentTodo(ev.target.value);
-          }}
-        />
+        <label htmlFor="todoInput">
+          Add Task
+          <input
+            placeholder="What would you like to do?"
+            value={currentTodoValue}
+            id="todoInput"
+            onChange={(ev) => {
+              setCurrentTodo(ev.target.value);
+            }}
+          />
+        </label>
       </form>
       <br />
       {todos.length > 0

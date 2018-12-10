@@ -4,17 +4,16 @@ import styles from './Nav.module.less';
 
 type Props = {
   lists: string[],
-  createList: (listName: string) => any,
 }
 
-let index = 0;
-export default function Nav({ lists, createList }: Props) {
+export default function Nav({ lists }: Props) {
   return (
     <nav className={styles.nav}>
       {lists.map((link) => {
         return (
           <NavLink
-            to={`/${link.toLocaleLowerCase()}`}
+            to={`/list/${link.toLocaleLowerCase()}`}
+            title={`${link} list`}
             key={link}
             className={styles.link}
             activeClassName={styles.activeLink}
@@ -23,13 +22,14 @@ export default function Nav({ lists, createList }: Props) {
           </NavLink>
         )
       })}
-      <button
+      <NavLink
         className={styles.addBtn}
-        type="button"
-        onClick={() => createList(`List-${++index}`)}
+        activeClassName={styles.hidden}
+        title="Create new list"
+        to="/create"
       >
         +
-      </button>
+      </NavLink>
     </nav>
   )
 }
