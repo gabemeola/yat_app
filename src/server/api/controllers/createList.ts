@@ -14,6 +14,10 @@ export default function createList(req: Req, res: Response) {
     return;
   }
 
-  store.add(listName)
-  res.status(200).send();
+  try {
+    store.add(listName)
+    res.status(200).send(store.keys());
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
 }

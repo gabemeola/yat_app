@@ -15,5 +15,11 @@ export default function getList(req: Req, res: Response) {
     return;
   }
 
-  res.status(200).send(store.get(listName));
+  const todos = store.get(listName);
+  if (typeof todos === 'undefined') {
+    res.status(404).send(`Could not find task for ${listName}`)
+    return;
+  }
+
+  res.status(200).send(todos.get());
 }

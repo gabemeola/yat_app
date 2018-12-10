@@ -2,16 +2,16 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './Nav.module.less';
 
-const links = [
-  'Personal',
-  'Chores',
-  'Zelzen',
-]
+type Props = {
+  lists: string[],
+  createList: (listName: string) => any,
+}
 
-export default function Nav() {
+let index = 0;
+export default function Nav({ lists, createList }: Props) {
   return (
     <nav className={styles.nav}>
-      {links.map((link) => {
+      {lists.map((link) => {
         return (
           <NavLink
             to={`/${link.toLocaleLowerCase()}`}
@@ -23,7 +23,13 @@ export default function Nav() {
           </NavLink>
         )
       })}
-      <button className={styles.addBtn} type="button">+</button>
+      <button
+        className={styles.addBtn}
+        type="button"
+        onClick={() => createList(`List-${++index}`)}
+      >
+        +
+      </button>
     </nav>
   )
 }

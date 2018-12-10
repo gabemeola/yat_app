@@ -5,6 +5,7 @@ module.exports = {
       "react-hooks"
     ],
     "rules": {
+        "no-plusplus": "off",
         "arrow-body-style": "off",
         "no-shadow": "off",
         "semi": "off",

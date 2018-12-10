@@ -3,23 +3,15 @@ import store from './helpers/store';
 
 interface Req extends Request {
   params: {
-    listName?: string,
+    listName: string,
+    id?: string,
   },
-  query: {
-    message?: string,
-  }
 }
 
 export default function updateTask(req: Req, res: Response) {
-  const { listName } = req.params;
-  const { message } = req.query;
-  if (!listName) {
-    res.status(400).send('listName param is required');
-    return;
-  }
-
-  if (!message) {
-    res.status(400).send('message query params are required')
+  const { id, listName } = req.params;
+  if (!id) {
+    res.status(400).send('id param is required');
     return;
   }
 
@@ -29,8 +21,6 @@ export default function updateTask(req: Req, res: Response) {
     return;
   }
 
-  const updateList = list.add({
-    message
-  });
+  const updateList = list.remove(Number(id));
   res.status(200).send(updateList);
 }

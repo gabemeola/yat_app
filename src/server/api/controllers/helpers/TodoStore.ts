@@ -1,5 +1,12 @@
 import { Todo } from 'models/Todo';
 
+type PartialTodo = {
+  id?: number,
+  message: Todo['message'],
+  author: Todo['author'],
+  authorId: Todo['authorId'],
+}
+
 export default class TodoStore {
   tasks: Todo[]
   constructor(initialTodos: Todo[] = []) {
@@ -9,8 +16,10 @@ export default class TodoStore {
     if (id) return this.tasks[id];
     return this.tasks;
   }
-  add(todo: Todo) {
-    this.tasks.push(todo)
+  add(todo: PartialTodo) {
+    // eslint-disable-next-line
+    if (typeof todo.id === 'undefined') todo.id = this.tasks.length;
+    this.tasks.push(todo as Todo)
     return this.tasks;
   }
   update(id: number, message: string) {

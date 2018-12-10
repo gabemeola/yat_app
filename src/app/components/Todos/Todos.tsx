@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import { Todo } from 'models/Todo';
+import betterFetch from 'utils/betterFetch';
 import Task from 'app/components/Task/Task';
 import styles from './Todos.module.less';
 
@@ -23,47 +25,75 @@ type Props = {
 }
 
 export default function Todos(props: Props) {
-  const initialTodoState: Todo[] = init;
-  const [todos, setTodo] = useState(initialTodoState);
+  const [todos, setTodos] = useState([] as Todo[]);
   const [currentTodoValue, setCurrentTodo] = useState('');
+  const [loading, setLoading] = useState(true);
+  const toggleLoading = () => setLoading(!loading);
+  const [error, setError] = useState('');
+
+  const currentList = props.match.params.list;
 
   const handleTodoSubmit = (ev: React.FormEvent) => {
     // TODO: Scroll to bottom on add if scroll pos already on bottom
     ev.preventDefault();
     // Save to todos
-    setTodo((todos) => [...todos, {
-      id: todos.length,
-      message: currentTodoValue,
-    }]);
+    betterFetch(`/api/lists/${currentList}?message=${currentTodoValue}`, {
+      method: 'PUT',
+    })
+      .then((res) => res.json())
+      .then((todos: Todo[]) => {
+        setTodos(() => todos);
+      })
     // Clear input box
     setCurrentTodo('');
   }
 
   const handleTodoDelete = (id: number) => {
-    setTodo((todos) => {
-      return todos.filter((todo) => todo.id !== id);
+    betterFetch(`/api/lists/${currentList}/${id}`, {
+      method: 'DELETE',
     })
+      .then((res) => res.json())
+      .then((todos: Todo[]) => {
+        setTodos(() => todos);
+      })
   }
 
   const handleTodoUpdate = (id: number, message: string) => {
-    setTodo((todos) => {
-      return todos.map((todo) => {
-        // Replace todo
-        if (todo.id === id) {
-          return {
-            ...todo,
-            message,
-          }
-        }
-
-        return todo;
-      })
+    betterFetch(`/api/lists/${currentList}/${id}?message=${message}`, {
+      method: 'PUT',
     })
+      .then((res) => res.json())
+      .then((todos: Todo[]) => {
+        setTodos(() => todos);
+      })
+  }
+
+  useEffect(() => {
+    betterFetch(`/api/lists/${currentList}`)
+      .then((res) => res.json())
+      .then((todos: Todo[]) => {
+        console.log('todos', todos);
+        setTodos(() => todos);
+      })
+      .catch(() => {
+        setError(`Error loading ${currentList}`)
+        toggleLoading()
+      })
+  }, [currentList])
+
+
+  if (error) {
+    return (
+      <Fragment>
+        <p>{error}</p>
+        <Link to="/">Go Home</Link>
+      </Fragment>
+    )
   }
 
   return (
-    <main>
-      <h3 style={{ textTransform: 'capitalize' }}>{props.match.params.list}</h3>
+    <main className={styles.main}>
+      <h3 style={{ textTransform: 'capitalize' }}>{currentList}</h3>
       <form onSubmit={handleTodoSubmit} className={styles.input}>
         <label htmlFor="todoInput">Add Task</label>
         <input
@@ -76,16 +106,23 @@ export default function Todos(props: Props) {
         />
       </form>
       <br />
-      {todos.map((todo) => {
-        return (
-          <Task
-            key={todo.id}
-            todo={todo}
-            onDelete={handleTodoDelete}
-            onUpdate={handleTodoUpdate}
-          />
+      {todos.length > 0
+        ? todos.map((todo) => {
+          return (
+            <Task
+              key={todo.id}
+              todo={todo}
+              onDelete={handleTodoDelete}
+              onUpdate={handleTodoUpdate}
+            />
+          )
+        })
+        : (
+          <span>
+            👀 Looks empty around here. Add some tasks!
+          </span>
         )
-      })}
+      }
     </main>
   )
 }
