@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { Socket } from 'socket.io';
+import emitTaskChange from './helpers/emitTaskChange';
 import store from './helpers/store';
 
 interface Req extends Request {
@@ -21,6 +23,9 @@ export default function updateTask(req: Req, res: Response) {
     return;
   }
 
+  const ws: Socket = req.app.get('ws');
+
   const updateList = list.remove(Number(id));
+  emitTaskChange(ws, listName, updateList);
   res.status(200).send(updateList);
 }

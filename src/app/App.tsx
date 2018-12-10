@@ -4,6 +4,7 @@ import betterFetch from 'utils/betterFetch';
 import Header from 'app/components/Header/Header';
 import Nav from 'app/components/Nav/Nav';
 import Todos from 'app/components/Todos/Todos';
+import socket from './config/socket';
 import styles from './App.module.less';
 
 
@@ -14,12 +15,24 @@ export default function App() {
   const toggleLoading = () => setLoading(!loading);
 
   useEffect(() => {
+    // Initial List fetch
     betterFetch('/api/lists')
       .then((res) => res.json())
       .then((lists: string[]) => {
         setLists(() => lists);
         toggleLoading();
       })
+
+    // Listen to updates
+    const event = 'updateLists';
+    socket.on(event, (lists: string[]) => {
+      setLists(() => lists);
+    })
+
+    return () => {
+      // Clean up socket
+      socket.off(event);
+    }
   }, []);
 
   const createList = (listName: string) => {
@@ -28,6 +41,9 @@ export default function App() {
     }).then((res) => res.json())
       .then((lists: string[]) => {
         setLists(() => lists);
+      })
+      .catch((err) => {
+        console.error('error creating list', err);
       })
   }
 
@@ -43,10 +59,9 @@ export default function App() {
               createList={createList}
             />
             <Route
+              exact
               path="/:list"
-              render={(props) => {
-                return <Todos {...props} />
-              }}
+              component={Todos}
             />
           </Fragment>
         )

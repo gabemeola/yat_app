@@ -1,4 +1,5 @@
 import http from 'http';
+import socket from 'socket.io';
 import Connect from './Connect';
 import { isDevelopment } from './constants';
 
@@ -10,6 +11,21 @@ export default function startServer(port: number) {
   const { app } = new Connect();
 
   const server = http.createServer(app);
+
+  // Set up Socket.io
+  const ws = socket(server);
+  app.set('ws', ws)
+  // Track how many user are connected
+  let currentUsers = 0;
+  ws.on('connection', (socket) => {
+    ws.volatile.emit('users', ++currentUsers);
+    socket.on('checkusers', (fn) => {
+      fn(currentUsers);
+    })
+    socket.on('disconnect', () => {
+      ws.volatile.emit('users', --currentUsers);
+    })
+  })
 
   // Boot Up Server at {PORT}
   server.listen(port, (err: Error) => {

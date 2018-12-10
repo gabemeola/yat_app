@@ -2,24 +2,16 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Todo } from 'models/Todo';
 import betterFetch from 'utils/betterFetch';
+import ws from 'app/config/socket';
+import ActivityBar from 'app/components/ActivityBar/ActivityBar';
 import Task from 'app/components/Task/Task';
 import styles from './Todos.module.less';
 
-const init: Todo[] = [{
-  id: 100,
-  message: 'djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka djsakjdlka djsakjdlka  djsakjdlka  djsakjdlka ',
-}]
-for (let i = 0; i <= 20; i++) {
-  init.push({
-    id: i,
-    message: i.toString()
-  })
-}
 
 type Props = {
   match: {
     params: {
-      list?: string,
+      list: string,
     }
   }
 }
@@ -69,16 +61,27 @@ export default function Todos(props: Props) {
   }
 
   useEffect(() => {
+    // Initial List Fetch
     betterFetch(`/api/lists/${currentList}`)
       .then((res) => res.json())
       .then((todos: Todo[]) => {
-        console.log('todos', todos);
         setTodos(() => todos);
       })
       .catch(() => {
         setError(`Error loading ${currentList}`)
         toggleLoading()
       })
+
+    // Listen for changes
+    const event = `updateList(${currentList})`;
+    ws.on(event, (todos: Todo[]) => {
+      setTodos(() => todos);
+    })
+
+    return () => {
+      // Clean up websocket
+      ws.off(event);
+    }
   }, [currentList])
 
 
@@ -93,7 +96,10 @@ export default function Todos(props: Props) {
 
   return (
     <main className={styles.main}>
-      <h3 style={{ textTransform: 'capitalize' }}>{currentList}</h3>
+      <div className={styles.nav}>
+        <h3 style={{ textTransform: 'capitalize' }}>{currentList}</h3>
+        <ActivityBar />
+      </div>
       <form onSubmit={handleTodoSubmit} className={styles.input}>
         <label htmlFor="todoInput">Add Task</label>
         <input

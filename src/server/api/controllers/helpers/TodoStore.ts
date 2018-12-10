@@ -3,8 +3,8 @@ import { Todo } from 'models/Todo';
 type PartialTodo = {
   id?: number,
   message: Todo['message'],
-  author: Todo['author'],
-  authorId: Todo['authorId'],
+  author?: Todo['author'],
+  authorId?: Todo['authorId'],
 }
 
 export default class TodoStore {
