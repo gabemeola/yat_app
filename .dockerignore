@@ -1,3 +1,4 @@
 node_modules/
+/public
 Dockerfile
 docker-compose.yml

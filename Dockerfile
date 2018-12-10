@@ -1,32 +1,30 @@
-# Client Builder Image
-FROM node:8.14 as PRODUCTION_ASSETS
+# Production Assets Image
+FROM node:8.14-alpine as PRODUCTION_ASSETS
 WORKDIR /app
-COPY ./client .
-# Install dependencies
+# Dependencies for install
+RUN apk --no-cache add g++ gcc libgcc libstdc++ make
+COPY . .
 RUN yarn install --frozen-lockfile
 # Build Project
 RUN yarn build
-
-
-# Server Golang binary build
-FROM golang:1.11 as BUILD
-WORKDIR /app
-COPY ./server/src ./src
-# Set GOPATH to workdir
-ENV GOPATH=/app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o yat ./src/main.go
-
-ENTRYPOINT ["/app/yat"]
+# Rewrite with only production dependencies for copy.
+RUN yarn install --frozen-lockfile --production
 
 
 # Set up Alpine Server
-FROM alpine:3.8
+FROM node:8.14-alpine
 MAINTAINER Gabe M <gabe@gabemeola.com>
 
 WORKDIR /app
-COPY --from=BUILD /app/yat /app/yat
-COPY --from=PRODUCTION_ASSETS /app/build/ /app/build/
+ENV PORT=8080
 EXPOSE 8080
 
-ENTRYPOINT ["/app/yat"]
+# Copy Build assests
+COPY --from=PRODUCTION_ASSETS /app/lib /app/lib
+COPY --from=PRODUCTION_ASSETS /app/public /app/public
+COPY package.json package.json
+# Copy Production Dependencies
+COPY --from=PRODUCTION_ASSETS /app/node_modules /app/node_modules
+# Run app!
+CMD yarn start
 
