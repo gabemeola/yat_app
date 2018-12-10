@@ -84,7 +84,7 @@ export default function Todos(props: Props) {
       })
 
     // Listen for changes
-    const event = `updateList(${currentList})`;
+    const event = `updateList(${currentList.toLowerCase()})`;
     ws.on(event, (todos: Todo[]) => {
       setTodos(todos);
     })
